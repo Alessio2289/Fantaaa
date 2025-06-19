@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Timer Asta Fantacalcio</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 40px; }
+    #timer {
+      font-size: 80px;
+      font-weight: bold;
+      margin: 20px;
+      transition: color 0.3s ease;
+    }
+    .warning {
+      color: red;
+      animation: shake 0.5s infinite alternate;
+    }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      50% { transform: translateX(5px); }
+      100% { transform: translateX(-5px); }
+    }
+    button {
+      font-size: 20px;
+      padding: 10px 25px;
+      margin: 10px;
+      cursor: pointer;
+    }
+    #message {
+      font-size: 36px;
+      margin-top: 30px;
+      min-height: 100px;
+      padding: 20px;
+      border-radius: 10px;
+      transition: background-color 0.5s ease;
+      color: white;
+      font-weight: bold;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      text-transform: uppercase;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Timer Asta Fantacalcio</h1>
+<div id="timer">8</div>
+
+<button id="startBtn">Avvia Timer</button>
+<button id="rilancioBtn" disabled>Rilancio</button>
+<button id="astaChiusaBtn" disabled>Asta Chiusa</button>
+
+<div id="message"></div>
+
+<script>
+  const timerEl = document.getElementById('timer');
+  const startBtn = document.getElementById('startBtn');
+  const rilancioBtn = document.getElementById('rilancioBtn');
+  const astaChiusaBtn = document.getElementById('astaChiusaBtn');
+  const messageEl = document.getElementById('message');
+
+  let timeLeft = 8;
+  let timerInterval = null;
+
+  const rilancioMessages = [
+    "Colpo da maestro! 🎯", "Offerta d'élite! 💼", "Boom! 💥",
+    "Rilancio fulmineo! ⚡", "Ma dove vai?!", "Attenzione ai colpi bassi!",
+    "Ti stai scaldando troppo... 🔥", "Un altro? Sei sicuro?", "Occhi negli occhi 👀",
+    "Asta di fuoco! 🔥", "Momento epico! 🌟", "Standing ovation! 👏",
+    "La follia ha un prezzo!", "Sfida titanica! 🛡️", "Altro che Champions League!",
+    "Rilancio shock! ⚠️", "Azzardo totale! 🧨", "Tensione alle stelle! 🚀",
+    "Lo voleva anche tua nonna!", "Battaglia finale! 🏁", "Ti stai innamorando?",
+    "Offerta romantica? 💘", "Da urlo!", "Lo stai strapagando... 💸",
+    "Chi offre di più?", "Tutti zitti, è il tuo momento.", "Che stile, che grinta!",
+    "Rilancio chirurgico! 💉", "Assurdo!", "Non ci credo!", "Ti stai giocando tutto!",
+    "È guerra aperta!", "Il tavolo trema! 💣", "Nessuno se lo aspettava!",
+    "Brividi! ❄️", "Vai col botto!", "Questa è una dichiarazione d’amore.",
+    "Un'offerta da leggenda! 🏆", "Lo compri o lo adotti?", "Tutti gli occhi su di te!",
+    "Tensione palpabile!", "Te lo sognerai stanotte!", "Lo prenderai?",
+    "Adesso si fa sul serio!", "Tutti impazziti!", "Non puoi più tornare indietro!",
+    "L'offerta delle offerte!", "Ora o mai più!", "Il pubblico esulta!", "Che spettacolo!"
+  ];
+
+  const chiusaMessages = [
+    "Asta chiusa! Complimenti al vincitore! 🎉", "È tuo! Grande acquisto! 🥳",
+    "Congratulazioni, colpo perfetto! 🏅", "Che affare!", "Hai fatto impazzire tutti!",
+    "Il giocatore ha firmato per te! ✍️", "Un talento nelle tue mani!",
+    "Nessuno poteva fermarti! 💪", "Onore al re dell’asta! 👑", "L'acquisto del secolo!",
+    "Ci hai messo il cuore ❤️", "Non ce n’era per nessuno!", "Hai dominato!",
+    "Gli applausi sono tutti per te 👏", "Un affare da incorniciare 🖼️",
+    "Ora inizia il divertimento! 🎈", "Missione compiuta! ✅", "Fumata bianca! ⚪",
+    "L'hai strappato agli avversari!", "La tua rosa sorride! 😊"
+  ];
+
+  function getRandomMessage(messages) {
+    return messages[Math.floor(Math.random() * messages.length)];
+  }
+
+  function getRandomBrightColor() {
+    const letters = '89ABCDEF';
+    let color = '#';
+    for(let i=0; i<6; i++) {
+      color += letters[Math.floor(Math.random() * letters.length)];
+    }
+    return color;
+  }
+
+  function updateTimer() {
+    timerEl.textContent = timeLeft;
+    if (timeLeft <= 3 && timeLeft > 0) {
+      timerEl.classList.add('warning');
+    } else {
+      timerEl.classList.remove('warning');
+    }
+
+    if (timeLeft === 0) {
+      clearInterval(timerInterval);
+      timerEl.textContent = "0";
+      timerEl.classList.remove('warning');
+      messageEl.style.backgroundColor = 'transparent';
+      messageEl.textContent = "TEMPO SCADUTO! PROSSIMA OFFERTA.";
+      rilancioBtn.disabled = true;
+      astaChiusaBtn.disabled = false;
+      return;
+    }
+
+    timeLeft--;
+  }
+
+  function startTimer() {
+    clearInterval(timerInterval);
+    timeLeft = 8;
+    timerEl.textContent = timeLeft;
+    timerEl.classList.remove('warning');
+    timerInterval = setInterval(updateTimer, 1000);
+  }
+
+  startBtn.addEventListener('click', () => {
+    messageEl.textContent = '';
+    messageEl.style.backgroundColor = 'transparent';
+    rilancioBtn.disabled = false;
+    astaChiusaBtn.disabled = true;
+    startTimer();
+  });
+
+  rilancioBtn.addEventListener('click', () => {
+    // consentiamo rilancio finché timeLeft >= 1 (quindi quando vediamo 1 sul timer)
+    if (timeLeft >= 1) {
+      const msg = getRandomMessage(rilancioMessages);
+      messageEl.textContent = msg.toUpperCase();
+      messageEl.style.backgroundColor = getRandomBrightColor();
+      startTimer();
+    } else {
+      messageEl.textContent = "NON PUOI RILANCIARE, TEMPO SCADUTO!";
+      messageEl.style.backgroundColor = 'transparent';
+      rilancioBtn.disabled = true;
+    }
+  });
+
+  astaChiusaBtn.addEventListener('click', () => {
+    const msg = getRandomMessage(chiusaMessages);
+    messageEl.textContent = msg.toUpperCase();
+    messageEl.style.backgroundColor = getRandomBrightColor();
+    rilancioBtn.disabled = true;
+    astaChiusaBtn.disabled = true;
+    clearInterval(timerInterval);
+  });
+</script>
+
+</body>
+</html>
